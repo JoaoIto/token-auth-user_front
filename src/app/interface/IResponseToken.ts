@@ -1,0 +1,3 @@
+interface IResponseToken {
+    token: string;
+}
