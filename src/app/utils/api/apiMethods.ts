@@ -21,14 +21,11 @@ export class ApiUtils {
 
 
     static async postLogin<T>(endpoint: string, data: object): Promise<T | undefined> {
-        console.log(window.sessionStorage.getItem('perfilId'));
-
         try {
             const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'usuario-id': window.sessionStorage.getItem('perfilId') || ''
                 },
                 body: JSON.stringify(data),
             });
