@@ -58,11 +58,11 @@ export default function RegisterPage(){
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<IUsuario>({
+    } = useForm<ILoginUser>({
         resolver: zodResolver(usuarioSchema),
     });
 
-    async function onSubmit (data: IUsuario) {
+    async function onSubmit (data: ILoginUser) {
         try {
             // Chama a função postUserLogin e passa os dados do formulário
             await postUserLogin(data);
@@ -77,6 +77,9 @@ export default function RegisterPage(){
             // Se necessário, você pode lidar com erros de login aqui
         }
     };
+    function routerLogin(){
+        router.push('/auth/login')
+    }
     return (
         <>
             <Container maxWidth="xs">
@@ -127,6 +130,9 @@ export default function RegisterPage(){
                             <Link href="#" variant="body2">
                                 Esqueceu a senha?
                             </Link>
+                            <Button className="bg-blue-900" type="button" variant="contained" color="primary" onClick={routerLogin}>
+                                Já tenho conta
+                            </Button>
                             <Button className="bg-blue-900" type="submit" variant="contained" color="primary">
                                 Entrar
                             </Button>
