@@ -77,6 +77,10 @@ export default function LoginPage() {
             // Se necessário, você pode lidar com erros de login aqui
         }
     };
+
+    function routerRegister(){
+        router.push('/auth/register')
+    }
     return (
         <>
             <Container maxWidth="xs">
@@ -129,6 +133,10 @@ export default function LoginPage() {
                             </Link>
                             <Button className="bg-blue-900" type="submit" variant="contained" color="primary">
                                 Entrar
+                            </Button>
+
+                            <Button className="bg-blue-900 my-2" type="button" variant="contained" color="primary" onClick={routerRegister}>
+                                Cadastrar
                             </Button>
                             {isAutenticado === false && (
                                 <Typography color="error" align="center">

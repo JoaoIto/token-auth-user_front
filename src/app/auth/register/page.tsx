@@ -65,9 +65,8 @@ export default function RegisterPage(){
     async function onSubmit (data: IUsuario) {
         try {
             // Chama a função postUserLogin e passa os dados do formulário
-            const token = await postUserLogin(data);
-            tokenService.save(token);
-            router.push('/');
+            await postUserLogin(data);
+            router.push('/auth/login');
             setTimeout(() => {
                 // Redireciona para a rota inicial
                 window.location.reload();
