@@ -15,7 +15,7 @@ const PrivateRoute = ({children}: PrivateRouteProps) => {
 
     useEffect(() => {
         if(!isUserAuthenticated){
-            push(APP_ROUTES.public.login)
+            push(APP_ROUTES.public.register)
         }
     }, [isUserAuthenticated, push]);
 

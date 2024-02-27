@@ -3,6 +3,7 @@ export const APP_ROUTES = {
         users: '/',
     },
     public: {
+        register: '/auth/register',
         login: '/auth/login'
     }
 }

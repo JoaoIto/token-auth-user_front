@@ -21,14 +21,11 @@ export class ApiUtils {
 
 
     static async postLogin<T>(endpoint: string, data: object): Promise<T | undefined> {
-        console.log(window.sessionStorage.getItem('perfilId'));
-
         try {
             const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'usuario-id': window.sessionStorage.getItem('perfilId') || ''
                 },
                 body: JSON.stringify(data),
             });
@@ -44,6 +41,26 @@ export class ApiUtils {
             }
         } catch (error) {
             console.error(error);
+        }
+    }
+
+    static async get<T>(endpoint: string, token: string): Promise<T | undefined> {
+        try {
+            const response = await fetch(endpoint, {
+                headers: {
+                    'Authorization': `${token}`,
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`Erro na requisição: ${response.status} - ${response.statusText}`);
+            }
+
+            const data: T = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Erro ao buscar os dados:', error);
+            throw error;
         }
     }
 }

@@ -1,4 +1,5 @@
 "use client"
+import Container from "@mui/material/Container";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
@@ -10,29 +11,29 @@ import Checkbox from "@mui/material/Checkbox";
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 import Button from "@mui/material/Button";
-import Container from "@mui/material/Container";
 import * as React from "react";
+import {useRouter} from "next/navigation";
+import {useState} from "react";
+import {z} from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {z} from "zod";
-import {useState} from "react";
-import {useRouter} from "next/navigation";
 import {tokenService} from "@/app/utils/cookies/tokenStorage";
 import {ApiUtils} from "@/app/utils/api/apiMethods";
 
 export async function postUserLogin(user: ILoginUser): Promise<string> {
     try {
-        const response = await ApiUtils.authenticate(user);
+        const response = await ApiUtils.postLogin('http://localhost:8080/register', user);
 
-        // Se a autenticação for bem-sucedida, você pode lidar com o token ou a resposta do backend aqui.
-        console.log('Token ou resposta do backend:', response);
-
-        // Certifique-se de que o response não é undefined antes de acessar a propriedade access_token
-        if (response !== undefined) {
-            const token = response;
-            return token;
+        // Verificar se a resposta não é nula e não é indefinida
+        if (response !== null && response !== undefined) {
+            // Verificar se a resposta contém uma mensagem de sucesso
+            if (typeof response === 'object' && 'message' in response) {
+                return response.message as string; // Retornar a mensagem de sucesso como uma string
+            } else {
+                throw new Error('A resposta do backend não contém uma mensagem de sucesso.');
+            }
         } else {
-            // Lide com o caso em que a resposta é undefined
+            // Se a resposta for nula ou indefinida, lance um erro ou retorne um valor alternativo
             throw new Error('A autenticação não retornou um token válido.');
         }
     } catch (error) {
@@ -42,7 +43,7 @@ export async function postUserLogin(user: ILoginUser): Promise<string> {
     }
 }
 
-export default function LoginPage() {
+export default function RegisterPage(){
     const router = useRouter();
     const [isAutenticado, setIsAutenticado] = useState(false);
     const usuarioSchema = z.object({
@@ -57,16 +58,15 @@ export default function LoginPage() {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<IUsuario>({
+    } = useForm<ILoginUser>({
         resolver: zodResolver(usuarioSchema),
     });
 
-    async function onSubmit (data: IUsuario) {
+    async function onSubmit (data: ILoginUser) {
         try {
             // Chama a função postUserLogin e passa os dados do formulário
-            const token = await postUserLogin(data);
-            tokenService.save(token);
-            router.push('/');
+            await postUserLogin(data);
+            router.push('/auth/login');
             setTimeout(() => {
                 // Redireciona para a rota inicial
                 window.location.reload();
@@ -77,9 +77,8 @@ export default function LoginPage() {
             // Se necessário, você pode lidar com erros de login aqui
         }
     };
-
-    function routerRegister(){
-        router.push('/auth/register')
+    function routerLogin(){
+        router.push('/auth/login')
     }
     return (
         <>
@@ -131,12 +130,11 @@ export default function LoginPage() {
                             <Link href="#" variant="body2">
                                 Esqueceu a senha?
                             </Link>
+                            <Button className="bg-blue-900" type="button" variant="contained" color="primary" onClick={routerLogin}>
+                                Já tenho conta
+                            </Button>
                             <Button className="bg-blue-900" type="submit" variant="contained" color="primary">
                                 Entrar
-                            </Button>
-
-                            <Button className="bg-blue-900 my-2" type="button" variant="contained" color="primary" onClick={routerRegister}>
-                                Cadastrar
                             </Button>
                             {isAutenticado === false && (
                                 <Typography color="error" align="center">
